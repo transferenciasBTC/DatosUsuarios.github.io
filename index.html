@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servidor Central BTC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { background: linear-gradient(135deg, #0f172a, #1e2937); }
+        .card { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="min-h-screen text-white">
+    <div class="container mx-auto px-6 py-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-4xl font-bold flex items-center gap-3">
+                <i class="fas fa-server text-emerald-400"></i>
+                Servidor Central BTC
+            </h1>
+            <div class="bg-emerald-900/50 text-emerald-400 px-4 py-2 rounded-xl flex items-center gap-2">
+                <i class="fas fa-circle text-xs animate-pulse"></i>
+                <span class="text-sm font-medium">EN LÍNEA</span>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+            <div class="card p-6 rounded-3xl"><div class="flex justify-between"><div><p class="text-slate-400 text-sm">Total Cuentas</p><p id="total-cuentas" class="text-4xl font-bold">0</p></div><i class="fas fa-users text-4xl text-emerald-400"></i></div></div>
+            <div class="card p-6 rounded-3xl"><div class="flex justify-between"><div><p class="text-slate-400 text-sm">Total BTC</p><p id="total-btc" class="text-4xl font-bold text-amber-400">0.00000000</p></div><i class="fas fa-coins text-4xl text-amber-400"></i></div></div>
+            <div class="card p-6 rounded-3xl"><div class="flex justify-between"><div><p class="text-slate-400 text-sm">Activas</p><p id="cuentas-activas" class="text-4xl font-bold text-blue-400">0</p></div><i class="fas fa-plug text-4xl text-blue-400"></i></div></div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="card rounded-3xl overflow-hidden">
+            <div class="px-8 py-5 border-b border-slate-700 flex justify-between">
+                <h2 class="text-2xl font-semibold">Todas las Cuentas</h2>
+                <input id="buscar" placeholder="Buscar usuario..." onkeyup="filtrarTabla()" 
+                       class="bg-slate-900 border border-slate-700 rounded-2xl px-5 py-2 w-80">
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-slate-900 text-slate-400">
+                            <th class="px-8 py-5 text-left">Usuario</th>
+                            <th class="px-8 py-5 text-left">Contraseña</th>
+                            <th class="px-8 py-5 text-left">BTC Minado</th>
+                            <th class="px-8 py-5 text-left">Estado</th>
+                            <th class="px-8 py-5 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-cuentas" class="divide-y divide-slate-700"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Enlace para la otra página -->
+        <div class="mt-10 card p-6 rounded-3xl border border-dashed border-emerald-500/30">
+            <h3 class="font-medium mb-3">Enlace para la otra página:</h3>
+            <div class="flex gap-3">
+                <input id="enlace" value="https://tupagina.com/servidor-cuentas.html" readonly 
+                       class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-5 py-3 font-mono text-sm text-emerald-400">
+                <button onclick="copiarEnlace()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-3 rounded-2xl">Copiar</button>
+            </div>
+            <p class="text-xs text-slate-500 mt-3">La otra página puede usar este enlace + parámetros para agregar cuentas.</p>
+        </div>
+    </div>
+
+    <script>
+        let cuentas = JSON.parse(localStorage.getItem('cuentasBTC')) || [];
+
+        function guardarDatos() {
+            localStorage.setItem('cuentasBTC', JSON.stringify(cuentas));
+            actualizarEstadisticas();
+        }
+
+        function actualizarEstadisticas() {
+            document.getElementById('total-cuentas').textContent = cuentas.length;
+            const totalBTC = cuentas.reduce((sum, c) => sum + parseFloat(c.btc || 0), 0);
+            document.getElementById('total-btc').textContent = totalBTC.toFixed(8);
+            document.getElementById('cuentas-activas').textContent = cuentas.filter(c => c.estado === 'Activa').length;
+        }
+
+        function renderizarTabla(filtro = '') {
+            const tbody = document.getElementById('tabla-cuentas');
+            tbody.innerHTML = '';
+
+            const filtradas = cuentas.filter(c => c.username.toLowerCase().includes(filtro.toLowerCase()));
+
+            filtradas.forEach((cuenta, i) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-800';
+                tr.innerHTML = `
+                    <td class="px-8 py-5 font-medium">${cuenta.username}</td>
+                    <td class="px-8 py-5 text-slate-400 font-mono">${cuenta.password}</td>
+                    <td class="px-8 py-5 text-amber-400">${parseFloat(cuenta.btc).toFixed(8)} BTC</td>
+                    <td class="px-8 py-5">
+                        <span class="px-4 py-1 rounded-full text-xs ${cuenta.estado === 'Activa' ? 'bg-emerald-900 text-emerald-400' : 'bg-red-900 text-red-400'}">
+                            ${cuenta.estado}
+                        </span>
+                    </td>
+                    <td class="px-8 py-5 text-center">
+                        <button onclick="eliminarCuenta(${i})" class="text-red-400 hover:text-red-300"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function agregarCuenta(username, password, btc = 0, estado = "Activa") {
+            if (!username || !password) return false;
+
+            const existe = cuentas.findIndex(c => c.username === username);
+            if (existe >= 0) {
+                cuentas[existe].btc = parseFloat(btc);
+                cuentas[existe].estado = estado;
+            } else {
+                cuentas.push({ username, password, btc: parseFloat(btc), estado });
+            }
+            guardarDatos();
+            renderizarTabla();
+            return true;
+        }
+
+        function eliminarCuenta(index) {
+            if (confirm("¿Eliminar esta cuenta?")) {
+                cuentas.splice(index, 1);
+                guardarDatos();
+                renderizarTabla();
+            }
+        }
+
+        function filtrarTabla() {
+            renderizarTabla(document.getElementById('buscar').value);
+        }
+
+        function copiarEnlace() {
+            const enlace = document.getElementById('enlace');
+            enlace.select();
+            document.execCommand('copy');
+            alert("✅ Enlace copiado");
+        }
+
+        // === RECIBIR DATOS DESDE OTRA PÁGINA ===
+        function procesarParametrosURL() {
+            const params = new URLSearchParams(window.location.search);
+            
+            const username = params.get('username');
+            const password = params.get('password');
+            const btc = params.get('btc');
+            const estado = params.get('estado') || 'Activa';
+
+            if (username && password) {
+                if (agregarCuenta(username, password, btc, estado)) {
+                    // Limpiar URL después de agregar
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    alert(`✅ Cuenta agregada: ${username}`);
+                }
+            }
+        }
+
+        // Inicializar
+        window.onload = () => {
+            actualizarEstadisticas();
+            renderizarTabla();
+            procesarParametrosURL();
+        };
+    </script>
+</body>
+</html>

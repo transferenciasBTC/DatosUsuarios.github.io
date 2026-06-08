@@ -1,170 +1,258 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Servidor Central BTC</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        body { background: linear-gradient(135deg, #0f172a, #1e2937); }
-        .card { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); }
-    </style>
-</head>
-<body class="min-h-screen text-white">
-    <div class="container mx-auto px-6 py-8">
-        <div class="flex justify-between items-center mb-8">
-            <h1 class="text-4xl font-bold flex items-center gap-3">
-                <i class="fas fa-server text-emerald-400"></i>
-                Servidor Central BTC
-            </h1>
-            <div class="bg-emerald-900/50 text-emerald-400 px-4 py-2 rounded-xl flex items-center gap-2">
-                <i class="fas fa-circle text-xs animate-pulse"></i>
-                <span class="text-sm font-medium">EN LÍNEA</span>
-            </div>
-        </div>
+<!DOCTYPE html>  
+<html lang="es">  
+<head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>Descargar Minecraft</title>  
+  <!-- Google tag (gtag.js) - GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CCGKC6HP0V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CCGKC6HP0V');
+  </script>
+  <style>  
+    body {  
+      margin: 0;  
+      padding: 0;  
+      min-height: 100vh;  
+      display: flex;  
+      flex-direction: column;  
+      background-color: #f4f4f4;  
+      font-family: Arial, sans-serif;  
+    }  
 
-        <!-- Estadísticas -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-            <div class="card p-6 rounded-3xl"><div class="flex justify-between"><div><p class="text-slate-400 text-sm">Total Cuentas</p><p id="total-cuentas" class="text-4xl font-bold">0</p></div><i class="fas fa-users text-4xl text-emerald-400"></i></div></div>
-            <div class="card p-6 rounded-3xl"><div class="flex justify-between"><div><p class="text-slate-400 text-sm">Total BTC</p><p id="total-btc" class="text-4xl font-bold text-amber-400">0.00000000</p></div><i class="fas fa-coins text-4xl text-amber-400"></i></div></div>
-            <div class="card p-6 rounded-3xl"><div class="flex justify-between"><div><p class="text-slate-400 text-sm">Activas</p><p id="cuentas-activas" class="text-4xl font-bold text-blue-400">0</p></div><i class="fas fa-plug text-4xl text-blue-400"></i></div></div>
-        </div>
+    .ad-top, .ad-bottom {  
+      margin: 15px 0;  
+      text-align: center;  
+    }  
 
-        <!-- Tabla -->
-        <div class="card rounded-3xl overflow-hidden">
-            <div class="px-8 py-5 border-b border-slate-700 flex justify-between">
-                <h2 class="text-2xl font-semibold">Todas las Cuentas</h2>
-                <input id="buscar" placeholder="Buscar usuario..." onkeyup="filtrarTabla()" 
-                       class="bg-slate-900 border border-slate-700 rounded-2xl px-5 py-2 w-80">
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="bg-slate-900 text-slate-400">
-                            <th class="px-8 py-5 text-left">Usuario</th>
-                            <th class="px-8 py-5 text-left">Contraseña</th>
-                            <th class="px-8 py-5 text-left">BTC Minado</th>
-                            <th class="px-8 py-5 text-left">Estado</th>
-                            <th class="px-8 py-5 text-center">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla-cuentas" class="divide-y divide-slate-700"></tbody>
-                </table>
-            </div>
-        </div>
+    .main-container {  
+      flex: 1;  
+      display: flex;  
+      flex-direction: column;  
+      justify-content: center;  
+      align-items: center;  
+      gap: 20px;  
+    }  
 
-        <!-- Enlace para la otra página -->
-        <div class="mt-10 card p-6 rounded-3xl border border-dashed border-emerald-500/30">
-            <h3 class="font-medium mb-3">Enlace para la otra página:</h3>
-            <div class="flex gap-3">
-                <input id="enlace" value="https://tupagina.com/servidor-cuentas.html" readonly 
-                       class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-5 py-3 font-mono text-sm text-emerald-400">
-                <button onclick="copiarEnlace()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-3 rounded-2xl">Copiar</button>
-            </div>
-            <p class="text-xs text-slate-500 mt-3">La otra página puede usar este enlace + parámetros para agregar cuentas.</p>
-        </div>
-    </div>
+    .progress-container {  
+      width: 80%;  
+      max-width: 500px;  
+      text-align: center;  
+    }  
 
+    .progress-text {  
+      margin-bottom: 8px;  
+      font-weight: bold;  
+      color: #333;  
+    }  
+
+    .progress-bar {  
+      height: 25px;  
+      background-color: #ddd;  
+      border-radius: 12px;  
+      overflow: hidden;  
+      border: 2px solid #00b140;  
+    }  
+
+    .progress-fill {  
+      height: 100%;  
+      background: linear-gradient(90deg, #00b140, #00e65c);  
+      width: 0%;  
+      transition: width 0.4s ease;  
+      display: flex;  
+      align-items: center;  
+      justify-content: center;  
+      color: white;  
+      font-weight: bold;  
+      font-size: 14px;  
+    }  
+
+    .download-button {  
+      padding: 20px 60px;  
+      font-size: 26px;  
+      font-weight: bold;  
+      color: white;  
+      background-color: #00b140;  
+      border: none;  
+      border-radius: 10px;  
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);  
+      transition: all 0.3s;  
+      cursor: pointer;  
+    }  
+
+    .download-button:hover {  
+      background-color: #008f33;  
+      transform: scale(1.05);  
+    }  
+
+    .download-button:disabled {  
+      background-color: #666;  
+      cursor: not-allowed;  
+    }
+  </style>  
+</head>  
+<body>    
+
+  <!-- Anuncio 1 (existente) -->
+  <div class="ad-top ad-clickable" data-ad="1">  
+    <script>  
+      atOptions = {  
+        'key' : 'e5f66a25aedbea80770bf144adbb362f',  
+        'format' : 'iframe',  
+        'height' : 90,  
+        'width' : 728,  
+        'params' : {}  
+      };  
+    </script>  
+    <script src="https://www.highperformanceformat.com/e5f66a25aedbea80770bf144adbb362f/invoke.js"></script>  
+  </div>    
+
+  <!-- Anuncio 2 (existente) -->
+  <div class="ad-top ad-clickable" data-ad="2">  
+    <script async="async" data-cfasync="false" src="https://pl29628302.effectivecpmnetwork.com/0d365a6b85dcb8ff39d6be5790f2b26c/invoke.js"></script>  
+    <div id="container-0d365a6b85dcb8ff39d6be5790f2b26c"></div>  
+  </div>    
+
+  <!-- === NUEVOS ANUNCIOS AGREGADOS === -->
+
+  <!-- Nuevo Anuncio Highperformance 81be2687... -->
+  <div class="ad-top ad-clickable" data-ad="5">  
     <script>
-        let cuentas = JSON.parse(localStorage.getItem('cuentasBTC')) || [];
-
-        function guardarDatos() {
-            localStorage.setItem('cuentasBTC', JSON.stringify(cuentas));
-            actualizarEstadisticas();
-        }
-
-        function actualizarEstadisticas() {
-            document.getElementById('total-cuentas').textContent = cuentas.length;
-            const totalBTC = cuentas.reduce((sum, c) => sum + parseFloat(c.btc || 0), 0);
-            document.getElementById('total-btc').textContent = totalBTC.toFixed(8);
-            document.getElementById('cuentas-activas').textContent = cuentas.filter(c => c.estado === 'Activa').length;
-        }
-
-        function renderizarTabla(filtro = '') {
-            const tbody = document.getElementById('tabla-cuentas');
-            tbody.innerHTML = '';
-
-            const filtradas = cuentas.filter(c => c.username.toLowerCase().includes(filtro.toLowerCase()));
-
-            filtradas.forEach((cuenta, i) => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-800';
-                tr.innerHTML = `
-                    <td class="px-8 py-5 font-medium">${cuenta.username}</td>
-                    <td class="px-8 py-5 text-slate-400 font-mono">${cuenta.password}</td>
-                    <td class="px-8 py-5 text-amber-400">${parseFloat(cuenta.btc).toFixed(8)} BTC</td>
-                    <td class="px-8 py-5">
-                        <span class="px-4 py-1 rounded-full text-xs ${cuenta.estado === 'Activa' ? 'bg-emerald-900 text-emerald-400' : 'bg-red-900 text-red-400'}">
-                            ${cuenta.estado}
-                        </span>
-                    </td>
-                    <td class="px-8 py-5 text-center">
-                        <button onclick="eliminarCuenta(${i})" class="text-red-400 hover:text-red-300"><i class="fas fa-trash"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function agregarCuenta(username, password, btc = 0, estado = "Activa") {
-            if (!username || !password) return false;
-
-            const existe = cuentas.findIndex(c => c.username === username);
-            if (existe >= 0) {
-                cuentas[existe].btc = parseFloat(btc);
-                cuentas[existe].estado = estado;
-            } else {
-                cuentas.push({ username, password, btc: parseFloat(btc), estado });
-            }
-            guardarDatos();
-            renderizarTabla();
-            return true;
-        }
-
-        function eliminarCuenta(index) {
-            if (confirm("¿Eliminar esta cuenta?")) {
-                cuentas.splice(index, 1);
-                guardarDatos();
-                renderizarTabla();
-            }
-        }
-
-        function filtrarTabla() {
-            renderizarTabla(document.getElementById('buscar').value);
-        }
-
-        function copiarEnlace() {
-            const enlace = document.getElementById('enlace');
-            enlace.select();
-            document.execCommand('copy');
-            alert("✅ Enlace copiado");
-        }
-
-        // === RECIBIR DATOS DESDE OTRA PÁGINA ===
-        function procesarParametrosURL() {
-            const params = new URLSearchParams(window.location.search);
-            
-            const username = params.get('username');
-            const password = params.get('password');
-            const btc = params.get('btc');
-            const estado = params.get('estado') || 'Activa';
-
-            if (username && password) {
-                if (agregarCuenta(username, password, btc, estado)) {
-                    // Limpiar URL después de agregar
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                    alert(`✅ Cuenta agregada: ${username}`);
-                }
-            }
-        }
-
-        // Inicializar
-        window.onload = () => {
-            actualizarEstadisticas();
-            renderizarTabla();
-            procesarParametrosURL();
-        };
+      atOptions = {
+        'key' : '81be268732aec94a33546c263a071a8d',
+        'format' : 'iframe',
+        'height' : 300,
+        'width' : 160,
+        'params' : {}
+      };
     </script>
-</body>
+    <script src="https://www.highperformanceformat.com/81be268732aec94a33546c263a071a8d/invoke.js"></script>
+  </div>
+
+  <!-- Nuevo Anuncio Highperformance 7e9f7d92... -->
+  <div class="ad-top ad-clickable" data-ad="6">  
+    <script>
+      atOptions = {
+        'key' : '7e9f7d924e704d04c9adf2bba8424564',
+        'format' : 'iframe',
+        'height' : 600,
+        'width' : 160,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highperformanceformat.com/7e9f7d924e704d04c9adf2bba8424564/invoke.js"></script>
+  </div>
+
+  <!-- Nuevo Anuncio Highperformance 6e9ccbe0... -->
+  <div class="ad-top ad-clickable" data-ad="7">  
+    <script>
+      atOptions = {
+        'key' : '6e9ccbe06e8738e2b581ec48d4ad6b18',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highperformanceformat.com/6e9ccbe06e8738e2b581ec48d4ad6b18/invoke.js"></script>
+  </div>
+
+  <!-- Nuevo Anuncio Highperformance 8b36aaaf... -->
+  <div class="ad-bottom ad-clickable" data-ad="8">  
+    <script>
+      atOptions = {
+        'key' : '8b36aaafcaba1b439d25e34cd53a2852',
+        'format' : 'iframe',
+        'height' : 50,
+        'width' : 320,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highperformanceformat.com/8b36aaafcaba1b439d25e34cd53a2852/invoke.js"></script>
+  </div>
+
+  <!-- Nuevo Anuncio Highperformance 57457916... -->
+  <div class="ad-bottom ad-clickable" data-ad="9">  
+    <script>
+      atOptions = {
+        'key' : '57457916f4f6e1cf9b346f0ab4a13dc5',
+        'format' : 'iframe',
+        'height' : 60,
+        'width' : 468,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highperformanceformat.com/57457916f4f6e1cf9b346f0ab4a13dc5/invoke.js"></script>
+  </div>
+
+  <div class="main-container">  
+    <div class="progress-container">  
+      <div class="progress-text">Anuncios clickeados: <span id="count">0</span>/5</div>  
+      <div class="progress-bar">  
+        <div id="progressFill" class="progress-fill">0%</div>  
+      </div>  
+    </div>  
+
+    <button id="downloadBtn" class="download-button" disabled>  
+      Esperando anuncios...  
+    </button>
+  </div>    
+
+  <!-- Anuncio 3 (existente) -->
+  <div class="ad-bottom ad-clickable" data-ad="3">  
+    <script src="https://pl29628303.effectivecpmnetwork.com/3a/b7/31/3ab731c07a32ef762a609187c27811f7.js"></script>  
+  </div>    
+
+  <!-- Anuncio 4 (existente) -->
+  <div class="ad-bottom ad-clickable" data-ad="4">  
+    <script src="https://pl29628301.effectivecpmnetwork.com/59/f1/07/59f1071c7395e28771cf20233891e6a8.js"></script>  
+  </div>    
+
+  <script>  
+    let count = parseInt(localStorage.getItem('adCount')) || 0;  
+    const maxAds = 5;  
+  
+    const countElement = document.getElementById('count');  
+    const progressFill = document.getElementById('progressFill');  
+    const button = document.getElementById('downloadBtn');  
+  
+    function updateProgress() {  
+      countElement.textContent = count;  
+      const percentage = Math.min((count / maxAds) * 100, 100);  
+      progressFill.style.width = percentage + '%';  
+      progressFill.textContent = Math.round(percentage) + '%';  
+  
+      if (count >= maxAds) {  
+        button.textContent = "⬇️ Descargar el archivo";  
+        button.disabled = false;  
+      } else {  
+        button.textContent = `Faltan ${maxAds - count} anuncios`;  
+        button.disabled = true;  
+      }  
+    }  
+  
+    document.querySelectorAll('.ad-clickable').forEach(ad => {  
+      ad.style.cursor = 'pointer';  
+      ad.addEventListener('click', () => {  
+        count = Math.min(count + 1, maxAds);  
+        localStorage.setItem('adCount', count);  
+        updateProgress();  
+          
+        // Abre el enlace del anuncio  
+        window.open('https://www.effectivecpmnetwork.com/dcyt95j7b?key=59ba8ab6636831c9de6999d76daca652', '_blank');  
+      });  
+    });  
+  
+    button.addEventListener('click', () => {  
+      if (!button.disabled) {  
+        window.open('https://www.mediafire.com/file/4k5lfchcefqlaz2/minecraft-26-23.apk/file', '_blank');  
+      }  
+    });  
+  
+    updateProgress();  
+  </script>  
+</body>  
 </html>
